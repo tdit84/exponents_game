@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kids Math Exponentiation Game</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background-color: #f0f8ff;
+      margin: 0;
+      padding: 10px;
+    }
+    h1 {
+      margin-bottom: 20px;
+    }
+    #question {
+      font-size: 24px;
+      margin: 20px;
+    }
+    .choices {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      flex-wrap: wrap;
+      margin-top: 20px;
+    }
+    .choice {
+      padding: 10px 20px;
+      border: 2px solid #333;
+      cursor: pointer;
+      border-radius: 6px;
+      font-size: 20px;
+      background-color: #fff;
+      transition: background-color 0.3s;
+    }
+    .choice:hover {
+      background-color: #e0e0e0;
+    }
+    .correct {
+      background-color: lightgreen !important;
+    }
+    .incorrect {
+      background-color: lightcoral !important;
+    }
+    #feedback {
+      font-size: 20px;
+      margin: 20px;
+    }
+    #scoreCounter {
+      display: inline-block;
+      margin-right: 20px;
+    }
+    #message {
+      display: inline-block;
+      height: 24px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Kids Math Exponentiation Game</h1>
+  <div id="question"></div>
+  <div class="choices" id="choices"></div>
+  <div id="feedback">
+    <span id="scoreCounter">Score: 0</span>
+    <span id="message"></span>
+  </div>
+  
+  <script>
+    var score = 0;
+    
+    function updateScoreCounter() {
+      document.getElementById("scoreCounter").innerHTML = "Score: " + score;
+    }
+    
+    // Generates a random exponentiation question.
+    function generateQuestion() {
+      document.getElementById("message").innerHTML = "";
+      
+      // Generate a random base and exponent.
+      // For early stages, use a smaller range for simplicity.
+      var base = Math.floor(Math.random() * 4) + 2; // 2 to 5
+      var exponent = Math.floor(Math.random() * 2) + 2; // 2 or 3
+      
+      // After reaching a score of 5, increase difficulty.
+      if (score >= 5) {
+        base = Math.floor(Math.random() * 8) + 2; // 2 to 9
+        exponent = Math.floor(Math.random() * 3) + 2; // 2 to 4
+      }
+      
+      var correctAnswer = Math.pow(base, exponent);
+      
+      // Build the question text.
+      var questionText = "What is " + base + " ^ " + exponent + " ?";
+      if (score < 5) {
+        questionText += "<br>Hint: Multiply " + base + " by itself " + exponent + " times.";
+      } else {
+        questionText += "<br>Hint: Think about repeated multiplication!";
+      }
+      document.getElementById("question").innerHTML = questionText;
+      
+      // Create common mistake options:
+      // Option 1: Multiplying base and exponent.
+      var option1 = base * exponent;
+      // Option 2: Adding base and exponent.
+      var option2 = base + exponent;
+      // Option 3: Subtracting exponent from base.
+      var option3 = base - exponent;
+      
+      // Combine the correct answer and distractors.
+      var choices = [correctAnswer, option1, option2, option3];
+      
+      // Ensure we have four unique options.
+      choices = Array.from(new Set(choices));
+      while (choices.length < 4) {
+        var randomOffset = Math.floor(Math.random() * 10) - 5;
+        if (randomOffset === 0) continue;
+        var candidate = correctAnswer + randomOffset;
+        if (choices.indexOf(candidate) === -1 && candidate !== correctAnswer) {
+          choices.push(candidate);
+        }
+      }
+      
+      // Shuffle the choices.
+      for (let i = choices.length - 1; i > 0; i--) {
+        let j = Math.floor(Math.random() * (i + 1));
+        [choices[i], choices[j]] = [choices[j], choices[i]];
+      }
+      
+      // Display the choices.
+      var choicesDiv = document.getElementById("choices");
+      choicesDiv.innerHTML = "";
+      for (var i = 0; i < choices.length; i++) {
+        var choice = choices[i];
+        var btn = document.createElement("div");
+        btn.className = "choice";
+        btn.innerHTML = choice;
+        btn.onclick = (function(selected, correct) {
+          return function() {
+            if (selected === correct) {
+              this.classList.add("correct");
+              document.getElementById("message").innerHTML = "Correct! 🎉";
+              score++;
+              updateScoreCounter();
+              setTimeout(generateQuestion, 1000);
+            } else {
+              this.classList.add("incorrect");
+              document.getElementById("message").innerHTML = "Incorrect! ❌";
+              score = Math.max(0, score - 1);
+              updateScoreCounter();
+            }
+          };
+        })(choice, correctAnswer);
+        choicesDiv.appendChild(btn);
+      }
+    }
+    
+    window.onload = function() {
+      updateScoreCounter();
+      generateQuestion();
+    };
+  </script>
+</body>
+</html>
