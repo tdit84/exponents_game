@@ -63,7 +63,7 @@
   <div id="question"></div>
   <div class="choices" id="choices"></div>
   <div id="feedback">
-    <span id="scoreCounter">Score: 0</span>
+    <span id="scoreCounter">⭐ 0</span>
     <span id="message"></span>
   </div>
   
@@ -71,7 +71,7 @@
     var score = 0;
     
     function updateScoreCounter() {
-      document.getElementById("scoreCounter").innerHTML = "Score: " + score;
+      document.getElementById("scoreCounter").innerHTML = "⭐ " + score;
     }
     
     // Generates a random exponentiation question.
@@ -91,8 +91,8 @@
       
       var correctAnswer = Math.pow(base, exponent);
       
-      // Build the question text.
-      var questionText = "What is " + base + " ^ " + exponent + " ?";
+      // Build the question text with raised exponent using <sup>
+      var questionText = "What is " + base + " <sup>" + exponent + "</sup> ?";
       if (score < 5) {
         questionText += "<br>Hint: Multiply " + base + " by itself " + exponent + " times.";
       } else {
